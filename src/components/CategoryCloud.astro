@@ -1,0 +1,36 @@
+---
+import { link } from "fs";
+import { formatBlogPosts, slugify } from "../js/utils";
+
+const allPosts = await Astro.glob("../pages/blog/*.md");
+const formattedPosts = formatBlogPosts(allPosts);
+const allCategories = formattedPosts
+  .map((cat) => {
+    return cat.frontmatter.category.toLowerCase();
+  })
+  .flat()
+  .reduce((acc, curr) => {
+    acc[curr] = (acc[curr] || 0) + 1;
+    return acc;
+  }, {});
+
+interface Props {
+  showCount?: boolean;
+}
+
+const { showCount } = Astro.props;
+---
+
+<ul class="categories">
+  {
+    Object.entries(allCategories).map(([key, value]) => {
+      return (
+        <li>
+          <a href={`/category/${slugify(key)}`} class="badge">
+            {key} {showCount && <span>(value)</span>}
+          </a>
+        </li>
+      );
+    })
+  }
+</ul>

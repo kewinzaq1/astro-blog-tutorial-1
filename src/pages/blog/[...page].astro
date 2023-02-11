@@ -18,6 +18,8 @@ import PostCard from "../../components/PostCard.astro";
 // utils imports
 import { formatBlogPosts } from "../../js/utils";
 import Pagination from "../../components/Pagination.astro";
+import Category from "../category/[category].astro";
+import CategoryCloud from "../../components/CategoryCloud.astro";
 
 const prevUrl =
   page.currentPage === 1
@@ -48,4 +50,8 @@ const nextUrl = page.currentPage === page.lastPage ? "" : page.currentPage + 1;
       currentPage={page.currentPage}
     />
   </section>
+  <aside class="container" aria-label="Blog categories">
+    <h2 class="h3">Blog Categories</h2>
+    <CategoryCloud showCount />
+  </aside>
 </MainLayout>
