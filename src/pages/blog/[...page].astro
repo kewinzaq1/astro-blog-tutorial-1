@@ -9,7 +9,7 @@ export async function getStaticPaths({ paginate }) {
 }
 
 const { page } = Astro.props;
-console.log("page: ", page);
+console.log("page: ", JSON.parse(JSON.stringify(page)));
 
 // component imports
 import MainLayout from "../../layouts/MainLayout.astro";
@@ -17,6 +17,15 @@ import PostCard from "../../components/PostCard.astro";
 
 // utils imports
 import { formatBlogPosts } from "../../js/utils";
+import Pagination from "../../components/Pagination.astro";
+
+const prevUrl =
+  page.currentPage === 1
+    ? ""
+    : page.currentPage - 1 === 1
+    ? "./"
+    : page.currentPage - 1;
+const nextUrl = page.currentPage === page.lastPage ? "" : page.currentPage + 1;
 ---
 
 <MainLayout title="My Blog">
@@ -33,5 +42,10 @@ import { formatBlogPosts } from "../../js/utils";
         ))
       }
     </div>
+    <Pagination
+      prevUrl={`${prevUrl}`}
+      nextUrl={`${nextUrl}`}
+      currentPage={page.currentPage}
+    />
   </section>
 </MainLayout>
