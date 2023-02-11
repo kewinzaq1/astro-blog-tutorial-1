@@ -1,0 +1,62 @@
+---
+import Link from "../../components/Link.astro";
+import PostCard from "../../components/PostCard.astro";
+import { formatBlogPosts, slugify } from "../../js/utils";
+import MainLayout from "../../layouts/MainLayout.astro";
+
+export async function getStaticPaths() {
+  return formatBlogPosts(await Astro.glob("../blog/*.md"))
+    .map((post) => {
+      return post.frontmatter.author;
+    })
+    .map((post) => {
+      return {
+        params: {
+          author: slugify(post),
+        },
+        props: { name: post },
+      };
+    });
+}
+
+const { author } = Astro.params;
+const { name } = Astro.props;
+
+const allPosts = await Astro.glob("../blog/*.md");
+const formattedPosts = formatBlogPosts(allPosts, {
+  limit: 3,
+}).filter((post) => post.frontmatter.author === name);
+---
+
+<MainLayout title="My Blog">
+  <section class="container about" aria-label="About Me">
+    <img
+      src="/images/headshot.jpg"
+      alt="My headshot"
+      width="200"
+      height="330"
+    />
+    <div class="content">
+      <h1 class="h1">My Blog</h1>
+      <p>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aperiam quidem
+        tempora beatae mollitia architecto optio sapiente repellendus natus.
+      </p>
+      <Link href="/about/" style="secondary" text="👋 About Me" />
+    </div>
+  </section>
+  <section class="container" aria-label="New Blog Posts">
+    <h2 class="h1">New Blog Posts</h2>
+    <div class="post-container">
+      {
+        formattedPosts.map((post) => (
+          <PostCard
+            frontmatter={post.frontmatter}
+            url={post.url}
+            tagType="h3"
+          />
+        ))
+      }
+    </div>
+  </section>
+</MainLayout>
